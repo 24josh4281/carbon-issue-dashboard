@@ -142,9 +142,11 @@
   function link(label, href) { const a=document.createElement("a"); a.textContent=label; a.href=href; a.target="_blank"; a.rel="noopener noreferrer"; return a; }
   function option(select, value, label=value) { const el=document.createElement("option"); el.value=value; el.textContent=label; select.appendChild(el); }
   function safeUrl(raw) { try { const u=new URL(raw); return ["http:","https:"].includes(u.protocol) ? u.href : ""; } catch { return ""; } }
-  function topicOf(row) { return row.topic||row.section||"분류 확인"; }
+  const topicAliases={"자발적 배출권 및 국제 탄소시장":"자발적 동향","자발적·국제 탄소시장":"자발적 동향","자발적·국제 시장":"자발적 동향","기후 공시":"기후공시"};
+  function topicOf(row) { const topic=row.topic||row.section||"분류 확인"; return topicAliases[topic]||topic; }
   const sectionOrder=["국내 정책","해외 정책","국내 산업","해외 산업","자발적 동향","재생에너지","고객사 동향","그 외 동향","기후공시","분류 확인"];
-  const requestedSection=new URLSearchParams(window.location.search).get("section");
+  const requestedRawSection=new URLSearchParams(window.location.search).get("section");
+  const requestedSection=topicAliases[requestedRawSection]||requestedRawSection;
   if(sectionOrder.includes(requestedSection)) state.topic=requestedSection;
   const topicLabels={"자발적 배출권 및 국제 탄소시장":"자발적 동향"};
   function selectedRows(skip=[]) {
